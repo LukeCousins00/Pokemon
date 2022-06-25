@@ -1,7 +1,5 @@
 ﻿using Pokemon.Models.PokemonModels;
 using System.Text.Json;
-using Pokemon.Controllers;
-using Pokemon.Models;
 
 namespace Pokemon.Clients;
 
@@ -20,7 +18,10 @@ public class PokemonClient : IPokemonClient
 
         HttpResponseMessage speciesResponse = await _client.GetAsync($"/api/v2/pokemon-species/{pokemonName}");
         
-        // speciesResponse.IsSuccessStatusCode
+        if (!speciesResponse.IsSuccessStatusCode)
+        {
+            throw new Exception("Failed to get response from pokeapi");
+        }
 
         PokemonSpecies species = JsonSerializer.Deserialize<PokemonSpecies>(await speciesResponse.Content.ReadAsStringAsync());
 
