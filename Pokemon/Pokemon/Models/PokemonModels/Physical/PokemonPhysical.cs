@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Pokemon.Models.PokemonModels.Pokemon;
+namespace Pokemon.Models.PokemonModels.Physical;
 
 public class PokemonPhysical
 {
@@ -10,8 +10,8 @@ public class PokemonPhysical
     [JsonPropertyName("weight")]
     public int PokemonWeight { get; set; }
 
-   // [JsonPropertyName("sprites")]
-   // public string PokemonSprite { get; set; }
+    [JsonPropertyName("sprites")]
+    public PokemonSprite PokemonSprite { get; set; }
 }
 
 

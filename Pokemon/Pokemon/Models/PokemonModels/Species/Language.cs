@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Pokemon.Models.PokemonModels.PokemonSpecies.PokemonSpecies;
+namespace Pokemon.Models.PokemonModels.Species;
 
-public class Habitat
+public class Language
 {
     [JsonPropertyName("name")]
     public string Name { get; set; }

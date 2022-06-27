@@ -1,8 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Pokemon.Models.PokemonModels.PokemonSpecies;
-
-public class Shape
+namespace Pokemon.Models.PokemonModels.Physical;
+public class PokemonHeight
 {
     [JsonPropertyName("name")]
     public string Name { get; set; }

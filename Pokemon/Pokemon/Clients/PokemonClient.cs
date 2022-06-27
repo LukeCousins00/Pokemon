@@ -1,5 +1,5 @@
-﻿using Pokemon.Models.PokemonModels.Pokemon;
-using Pokemon.Models.PokemonModels.PokemonSpecies.PokemonSpecies;
+﻿using Pokemon.Models.PokemonModels.Physical;
+using Pokemon.Models.PokemonModels.Species;
 using System.Text.Json;
 
 namespace Pokemon.Clients;
@@ -18,7 +18,7 @@ public class PokemonClient : IPokemonClient
         pokemonName = pokemonName.ToLower();
 
         HttpResponseMessage speciesResponse = await _client.GetAsync($"/api/v2/pokemon-species/{pokemonName}");
-        
+
         if (!speciesResponse.IsSuccessStatusCode)
         {
             throw new Exception("Failed to get response from pokeapi");
@@ -44,25 +44,38 @@ public class PokemonClient : IPokemonClient
 
         PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
 
-        int pokemonHeight = physical.PokemonHeight;
-
-        return pokemonHeight;
+        return physical.PokemonHeight;
     }
 
     public async Task<int> GetPokemonWeightAsync(string pokemonName)
     {
         pokemonName = pokemonName.ToLower();
 
-        
+        HttpResponseMessage physicalResponse = await _client.GetAsync($"/api/v2/pokemon/{pokemonName}");
 
-        return (3);
+        if (!physicalResponse.IsSuccessStatusCode)
+        {
+            throw new Exception("Failed to get response from pokeapi");
+        }
 
+        PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
+
+        return physical.PokemonWeight;
     }
 
     public async Task<string> GetPokemonSpriteAsync(string pokemonName)
     {
         pokemonName = pokemonName.ToLower();
 
-        return ("lol");
+        HttpResponseMessage physicalResponse = await _client.GetAsync($"/api/v2/pokemon/{pokemonName}");
+
+        if (!physicalResponse.IsSuccessStatusCode)
+        {
+            throw new Exception("Failed to get response from pokeapi");
+        }
+
+        PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
+
+        return physical.PokemonSprite.FrontDefault;
     }
 }

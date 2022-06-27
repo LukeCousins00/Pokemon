@@ -66,6 +66,8 @@ namespace Pokemon.Controllers
         public async Task<IActionResult> PokeSize(string pokemon1)
         {
             int heightPokemon1 = await _pokemonClient.GetPokemonHeightAsync(pokemon1);
+            int weightPokemon1 = await _pokemonClient.GetPokemonWeightAsync(pokemon1);
+            string spriteUrlPokemon1 = await _pokemonClient.GetPokemonSpriteAsync(pokemon1);
 
             if (pokemon1 == null)
             {
@@ -84,6 +86,8 @@ namespace Pokemon.Controllers
             PokeSizeViewModel viewModel = new PokeSizeViewModel
             {
                 PokemonName = pokemon1,
+                PokemonWeight = weightPokemon1,
+                PokemonSpriteUrl = spriteUrlPokemon1,
                 PokemonHeight = heightPokemon1
             };
 

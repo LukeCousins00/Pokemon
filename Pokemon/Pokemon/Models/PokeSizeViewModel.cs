@@ -9,6 +9,5 @@ public class PokeSizeViewModel
     public string PokemonName { get; set; }
     public int PokemonHeight { get; set; }
     public int PokemonWeight { get; set; }
-
-    //public MemoryStream PokemonSprite { get; set; }
+    public string PokemonSpriteUrl { get; set; }
 }

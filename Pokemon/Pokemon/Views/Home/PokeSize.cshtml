@@ -16,5 +16,6 @@
 
 @if (Model != null)
 {
-    <h2>@Model.PokemonName's Height Is: @Model.PokemonHeight</h2>
+    <h2>@Model.PokemonName's Height Is: @(Model.PokemonHeight)m</h2>
+    <img src="@Model.PokemonSpriteUrl" alt="pokemon sprite" height="@(Model.PokemonHeight * 10 + 25)"/>
 }
