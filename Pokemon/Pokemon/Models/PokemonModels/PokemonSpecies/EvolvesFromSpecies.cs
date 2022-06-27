@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Pokemon.Models.PokemonModels;
+namespace Pokemon.Models.PokemonModels.PokemonSpecies.PokemonSpecies;
 
-public class EggGroups
+public class EvolvesFromSpecies
 {
     [JsonPropertyName("name")]
     public string Name { get; set; }
