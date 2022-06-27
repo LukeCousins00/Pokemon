@@ -57,6 +57,39 @@ namespace Pokemon.Controllers
             return View(viewModel);
         }
 
+        public IActionResult PokeSize()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PokeSize(string pokemon1)
+        {
+            int heightPokemon1 = await _pokemonClient.GetPokemonHeightAsync(pokemon1);
+
+            if (pokemon1 == null)
+            {
+                // this won't happen once we have implemented user input validation
+            }
+
+            if (pokemon1.Length > 1)
+            {
+                pokemon1 = char.ToUpper(pokemon1[0]) + pokemon1.Substring(1);
+            }
+            else
+            {
+                pokemon1.ToUpper();
+            }
+
+            PokeSizeViewModel viewModel = new PokeSizeViewModel
+            {
+                PokemonName = pokemon1,
+                PokemonHeight = heightPokemon1
+            };
+
+            return View(viewModel);
+        }
+
         public IActionResult Privacy()
         {
             return View();

@@ -1,0 +1,20 @@
+﻿@model PokeSizeViewModel
+
+@{
+    ViewData["Title"] = "Pokemon THICCness";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>where all the thiccies at</p>
+
+<form method="post">
+    <div class="form-group mb-3">
+        <input type="text" class="form-control" name="pokemon1" placeholder="Pokemon 1">
+    </div>
+    <button type="submit" class="btn btn-primary">Get This Pokemon's Height</button>
+</form>
+
+@if (Model != null)
+{
+    <h2>@Model.PokemonName's Height Is: @Model.PokemonHeight</h2>
+}

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Pokemon.Models.PokemonModels;
+namespace Pokemon.Models.PokemonModels.PokemonSpecies.PokemonSpecies;
 
 public class PokemonSpeciesName
 {
