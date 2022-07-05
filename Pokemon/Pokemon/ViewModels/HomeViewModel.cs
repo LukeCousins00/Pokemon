@@ -1,4 +1,4 @@
-﻿using Pokemon.Models.PokemonModels;
+﻿using Pokemon.Logic.Models.PokeApi;
 
 namespace Pokemon.ViewModels;
 

@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pokemon.Clients;
-using Pokemon.Models.PokemonModels;
+using Pokemon.Logic.Interfaces;
+using Pokemon.Logic.Models.PokeApi;
 using Pokemon.ViewModels;
 
 namespace Pokemon.Controllers;
 
 public class BreedingController : Controller
 {
-    private readonly IPokemonClient _pokemonClient;
+    private readonly IPokeApiService _pokemonClient;
 
-    public BreedingController(IPokemonClient pokemonClient)
+    public BreedingController(IPokeApiService pokemonClient)
     {
         _pokemonClient = pokemonClient;
     }
