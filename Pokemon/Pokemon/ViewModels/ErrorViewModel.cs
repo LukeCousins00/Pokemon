@@ -1,4 +1,4 @@
-namespace Pokemon.Models
+namespace Pokemon.ViewModels
 {
     public class ErrorViewModel
     {

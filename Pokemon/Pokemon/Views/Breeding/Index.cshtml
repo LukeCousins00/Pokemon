@@ -1,0 +1,43 @@
+﻿@model BreedingViewModel
+
+@{
+    ViewData["Title"] = "Breeding Centre";
+}
+
+<form method="post">
+    <div class="form-group mb-3">
+        <input type="text" class="form-control" name="pokemon1" placeholder="Pokemon 1">
+    </div>
+    <div class="form-group mb-3">
+        <input type="text" class="form-control" name="pokemon2" placeholder="Pokemon 2">
+    </div>
+    <button type="submit" class="btn btn-primary">Can They Breed</button>
+</form>
+
+@if (Model != null)
+{
+    @foreach (EggGroupViewModel item in Model.EggGroups)
+    {
+        <h2>@item.PokemonName</h2>
+        <img src="@item.PokemonSpriteUrl" alt="pokemon sprite" />
+        <ul class="list-group mb-2">
+            @foreach (string eggGroup in item.EggGroups)
+            {
+                <li class="list-group-item">@eggGroup</li>
+            }
+        </ul>
+    }
+
+    if (@Model.CanBreed)
+    {
+        <div class="alert alert-success" role="alert">
+            THEY CAN BREED!
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            NO BREEDING :'(
+        </div>
+    }
+}

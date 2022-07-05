@@ -1,12 +1,14 @@
-﻿using Pokemon.Models.PokemonModels.Physical;
-using Pokemon.Models.PokemonModels.Species;
+﻿using Pokemon.Models.PokemonModels.Species;
 using System.Text.Json;
+using System.Net.Http;
+using Pokemon.Models.PokemonModels;
 
 namespace Pokemon.Clients;
 
 public class PokemonClient : IPokemonClient
 {
     private readonly HttpClient _client;
+    PokeApiNet.PokeApiClient pokeClient = new PokeApiNet.PokeApiClient();
 
     public PokemonClient(HttpClient client)
     {
@@ -31,7 +33,7 @@ public class PokemonClient : IPokemonClient
         return eggGroups;
     }
 
-    public async Task<int> GetPokemonHeightAsync(string pokemonName)
+    public async Task<PokemonPhysical> GetPokemonPhysicalAsync(string pokemonName)
     {
         pokemonName = pokemonName.ToLower();
 
@@ -44,38 +46,23 @@ public class PokemonClient : IPokemonClient
 
         PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
 
-        return physical.PokemonHeight;
+        return physical;
     }
 
-    public async Task<int> GetPokemonWeightAsync(string pokemonName)
+    public async Task<PagedResponse<PokemonName>> GetPagedPokemonAsync(int pageLimit, int? offset)
     {
-        pokemonName = pokemonName.ToLower();
+        HttpResponseMessage pagedResponse = await _client.GetAsync($"/api/v2/pokemon/?limit={pageLimit}&offset={offset}");
 
-        HttpResponseMessage physicalResponse = await _client.GetAsync($"/api/v2/pokemon/{pokemonName}");
-
-        if (!physicalResponse.IsSuccessStatusCode)
+        if (!pagedResponse.IsSuccessStatusCode)
         {
             throw new Exception("Failed to get response from pokeapi");
         }
 
-        PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
-
-        return physical.PokemonWeight;
-    }
-
-    public async Task<string> GetPokemonSpriteAsync(string pokemonName)
-    {
-        pokemonName = pokemonName.ToLower();
-
-        HttpResponseMessage physicalResponse = await _client.GetAsync($"/api/v2/pokemon/{pokemonName}");
-
-        if (!physicalResponse.IsSuccessStatusCode)
+        PagedResponse<PokemonName> paged = JsonSerializer.Deserialize<PagedResponse<PokemonName>>(await pagedResponse.Content.ReadAsStringAsync(), new JsonSerializerOptions
         {
-            throw new Exception("Failed to get response from pokeapi");
-        }
+            PropertyNameCaseInsensitive = true,
+        });
 
-        PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
-
-        return physical.PokemonSprite.FrontDefault;
+        return paged;
     }
 }

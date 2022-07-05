@@ -1,12 +1,11 @@
-﻿namespace Pokemon.Clients
+﻿using Pokemon.Models.PokemonModels;
+
+namespace Pokemon.Clients
 {
     public interface IPokemonClient
     {
         Task<List<string>> GetEggGroupsAsync(string pokemonName);
-
-        Task<int> GetPokemonHeightAsync(string pokemonName);
-
-        Task<int> GetPokemonWeightAsync(string pokemonName);
-        Task<string> GetPokemonSpriteAsync(string pokemonName);
+        Task<PokemonPhysical> GetPokemonPhysicalAsync(string pokemoName);
+        Task<PagedResponse<PokemonName>> GetPagedPokemonAsync(int limit, int? offset);
     }
 }

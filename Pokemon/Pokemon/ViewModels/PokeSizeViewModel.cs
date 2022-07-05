@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 
 
-namespace Pokemon.Models;
+namespace Pokemon.ViewModels;
 
 public class PokeSizeViewModel
 {

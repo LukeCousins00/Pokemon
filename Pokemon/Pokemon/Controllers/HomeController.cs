@@ -1,108 +1,68 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pokemon.Clients;
 using Pokemon.Logic;
-using Pokemon.Models;
+using Pokemon.Models.PokemonModels;
+using Pokemon.ViewModels;
 using System.Diagnostics;
 
-namespace Pokemon.Controllers
+
+namespace Pokemon.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IPokemonClient _pokemonClient;
+
+    public HomeController(IPokemonClient pokemonClient)
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IPokemonClient _pokemonClient;
+        _pokemonClient = pokemonClient;
+    }
 
-        public HomeController(ILogger<HomeController> logger, IPokemonClient pokemonClient)
+    [HttpGet]
+    public async Task<IActionResult> Index([FromQuery(Name = "page")] int? pageNumber, int limit = 24)
+    {
+        if (pageNumber == null)
         {
-            _logger = logger;
-            _pokemonClient = pokemonClient;
+            pageNumber = 1;
         }
 
-        // [HttpGet] by default
-        public async Task<IActionResult> Index()
+        PagedResponse<PokemonName> pagedResponse = await _pokemonClient.GetPagedPokemonAsync(limit, ((pageNumber - 1) * limit));
+        List<PokemonPhysical> pokemonPhysicals = new List<PokemonPhysical>();   
+
+        // get pokemon physical
+        foreach (var pokemon in pagedResponse.Results)
         {
-            var lolz = new PokemonLogic();
+            PokemonPhysical pokemonPhysical = await _pokemonClient.GetPokemonPhysicalAsync(pokemon.Name);
 
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Index(string pokemon1, string pokemon2)
-        {
-            List<string> eggGroupPokemon1 = await _pokemonClient.GetEggGroupsAsync(pokemon1);
-            List<string> eggGroupPokemon2 = await _pokemonClient.GetEggGroupsAsync(pokemon2);
-
-            List<EggGroupViewModel> eggGroups = new List<EggGroupViewModel>
+            PokemonPhysical physicalViewModel = new PokemonPhysical
             {
-                new EggGroupViewModel
-                {
-                    PokemonName = pokemon1,
-                    EggGroups = eggGroupPokemon1
-                },
-
-                new EggGroupViewModel
-                {
-                    PokemonName = pokemon2,
-                    EggGroups = eggGroupPokemon2
-                }
+                Name = pokemon.Name,
+                Height = pokemonPhysical.Height,
+                Weight = pokemonPhysical.Weight,
+                Sprite = pokemonPhysical.Sprite
             };
 
-            List<string> matchingEggGroupNames = eggGroupPokemon1.Intersect(eggGroupPokemon2).ToList();
-
-            HomeViewModel viewModel = new HomeViewModel
-            {
-                CanBreed = matchingEggGroupNames.Any(),
-                EggGroups = eggGroups
-            };
-
-            return View(viewModel);
+            pokemonPhysicals.Add(physicalViewModel);
         }
 
-        public IActionResult PokeSize()
+        HomeViewModel viewModel = new HomeViewModel
         {
-            return View();
-        }
+            PokemonData = pokemonPhysicals,
+            Count = pagedResponse.Count,
+            PageSize = limit
+        };
 
-        [HttpPost]
-        public async Task<IActionResult> PokeSize(string pokemon1)
-        {
-            int heightPokemon1 = await _pokemonClient.GetPokemonHeightAsync(pokemon1);
-            int weightPokemon1 = await _pokemonClient.GetPokemonWeightAsync(pokemon1);
-            string spriteUrlPokemon1 = await _pokemonClient.GetPokemonSpriteAsync(pokemon1);
+        return View(viewModel);
+    }
 
-            if (pokemon1 == null)
-            {
-                // this won't happen once we have implemented user input validation
-            }
+    [HttpPost]
+    public async Task<IActionResult> Index()
+    {
+        return View();
+    }
 
-            if (pokemon1.Length > 1)
-            {
-                pokemon1 = char.ToUpper(pokemon1[0]) + pokemon1.Substring(1);
-            }
-            else
-            {
-                pokemon1.ToUpper();
-            }
-
-            PokeSizeViewModel viewModel = new PokeSizeViewModel
-            {
-                PokemonName = pokemon1,
-                PokemonWeight = weightPokemon1,
-                PokemonSpriteUrl = spriteUrlPokemon1,
-                PokemonHeight = heightPokemon1
-            };
-
-            return View(viewModel);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
