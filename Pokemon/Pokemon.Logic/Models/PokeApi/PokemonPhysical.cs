@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Pokemon.Logic.Models.PokeApi.Sprite;
+using System.Text.Json.Serialization;
 
 namespace Pokemon.Logic.Models.PokeApi;
 
@@ -14,7 +15,7 @@ public class PokemonPhysical
     public int Weight { get; set; }
 
     [JsonPropertyName("sprites")]
-    public PokemonSprite Sprite { get; set; }
+    public Sprites spriteUrl { get; set; }
 }
 
 

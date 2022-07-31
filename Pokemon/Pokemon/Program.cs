@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Pokemon.Data;
 using Pokemon.Logic.Interfaces;
 using Pokemon.Logic.Services;
@@ -9,9 +10,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddHttpClient<IPokeApiService, PokeApiService>(options => options.BaseAddress = new Uri("https://pokeapi.co"));
 
 builder.Services.AddScoped<IPokemonService, PokemonService>();
+builder.Services.AddScoped<IWhoService, WhoService>();
+
+builder.Services.AddMemoryCache();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 
 
 var app = builder.Build();

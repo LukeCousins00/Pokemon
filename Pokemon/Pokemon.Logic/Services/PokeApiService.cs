@@ -2,6 +2,7 @@
 using Pokemon.Logic.Interfaces;
 using Pokemon.Logic.Models.PokeApi.Species;
 using Pokemon.Logic.Models.PokeApi;
+using Pokemon.Logic.Models.PokeApi.Generation;
 
 namespace Pokemon.Logic.Services;
 
@@ -12,6 +13,34 @@ public class PokeApiService : IPokeApiService
     public PokeApiService(HttpClient client)
     {
         _client = client;
+    }
+
+    public string FirstLetterToUpper(string str)
+    {
+        if (str == null)
+            return null;
+
+        if (str.Length > 1)
+            return char.ToUpper(str[0]) + str.Substring(1);
+
+        return str.ToUpper();
+    }
+
+    public async Task<List<string>> GetPokemonByGenerationAsync(int generation)
+    {
+
+        HttpResponseMessage generationResponse = await _client.GetAsync($"/api/v2/generation/{generation}");
+
+        if (!generationResponse.IsSuccessStatusCode)
+        {
+            throw new Exception("Failed to get response from pokeapi");
+        }
+
+        PokemonGeneration pokemonGeneration = JsonSerializer.Deserialize<PokemonGeneration>(await generationResponse.Content.ReadAsStringAsync());
+
+        List<string> pokemonNames = pokemonGeneration.Species.Select(x => x.Name).ToList();
+
+        return pokemonNames;
     }
 
     public async Task<List<string>> GetEggGroupsAsync(string pokemonName)
@@ -44,6 +73,8 @@ public class PokeApiService : IPokeApiService
         }
 
         PokemonPhysical physical = JsonSerializer.Deserialize<PokemonPhysical>(await physicalResponse.Content.ReadAsStringAsync());
+
+        physical.Name = FirstLetterToUpper(physical.Name);
 
         return physical;
     }

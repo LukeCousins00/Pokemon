@@ -31,10 +31,10 @@ public class HomeController : Controller
 
             PokemonPhysical physicalViewModel = new PokemonPhysical
             {
-                Name = pokemon.Name,
+                Name = pokemonPhysical.Name,
                 Height = pokemonPhysical.Height,
                 Weight = pokemonPhysical.Weight,
-                Sprite = pokemonPhysical.Sprite
+                spriteUrl = pokemonPhysical.spriteUrl
             };
 
             pokemonPhysicals.Add(physicalViewModel);

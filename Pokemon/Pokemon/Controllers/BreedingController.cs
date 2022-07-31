@@ -26,10 +26,10 @@ public class BreedingController : Controller
         List<string> eggGroupPokemon2 = await _pokemonClient.GetEggGroupsAsync(pokemon2);
 
         PokemonPhysical pokemon1Physical = await _pokemonClient.GetPokemonPhysicalAsync(pokemon1);
-        var spriteUrlPokemon1 = pokemon1Physical.Sprite;
+        var spriteUrlPokemon1 = pokemon1Physical.spriteUrl;
 
         PokemonPhysical pokemon2Physical = await _pokemonClient.GetPokemonPhysicalAsync(pokemon2);
-        var spriteUrlPokemon2 = pokemon2Physical.Sprite;
+        var spriteUrlPokemon2 = pokemon2Physical.spriteUrl;
 
 
 
@@ -39,14 +39,14 @@ public class BreedingController : Controller
                 {
                     PokemonName = pokemon1,
                     EggGroups = eggGroupPokemon1,
-                    PokemonSpriteUrl = spriteUrlPokemon1.FrontDefault,
+                    PokemonSpriteUrl = spriteUrlPokemon1.ToString()
                 },
 
                 new EggGroupViewModel
                 {
                     PokemonName = pokemon2,
                     EggGroups = eggGroupPokemon2,
-                    PokemonSpriteUrl = spriteUrlPokemon2.FrontDefault
+                    PokemonSpriteUrl = spriteUrlPokemon2.ToString()
                 }
             };
 

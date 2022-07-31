@@ -25,14 +25,17 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">View All Pokemon</a>
                         </li>
-                        <li class="nav-item">
+                     @*   <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="PokeSize">Find Stats for a single Pokemon</a>
+                        </li>*@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Who" asp-action="Index">Who's that Pokemon?</a>
                         </li>
                     </ul>
                 </div>
-                <div class="input-group">
+                @*<div class="input-group">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search for a Pokemon" aria-label="Search">
-                </div>
+                </div>*@
             </div>
         </nav>
     </header>
@@ -41,7 +44,6 @@
             @RenderBody()
         </main>
     </div>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -4,6 +4,8 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
 <div class="container">
     <div class="row row-cols-6 g-4">
         @foreach (var item in Model.PokemonData)
@@ -11,7 +13,7 @@
             <div class="col">
                 <div class="border">
                     <div class="d-flex justify-content-center">
-                        <img src="@item.Sprite.FrontDefault" class="img-fluid" />
+                        <img src="@item.spriteUrl.Other.OfficialArtwork.FrontDefault" class="img-fluid" width="100" height="100" />
 
                     </div>
                     <div class="d-flex justify-content-center">
