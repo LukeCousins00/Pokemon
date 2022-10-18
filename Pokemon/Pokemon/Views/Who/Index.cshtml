@@ -1,0 +1,201 @@
+﻿@model WhoViewModel
+
+@{
+	int minGeneration = 1;
+	int maxGeneration = 8;
+
+	List<int> test = new List<int>() { 1, 2, 3, 4, 5 };
+	string realTest = string.Join(",", test);
+}
+
+<style>
+	.pokemon-image {
+		transition: filter 3s ease-out;
+		filter: brightness(0);
+	}
+</style>
+
+<div class="d-flex justify-content-center">
+	<a href="https://fontmeme.com/pokemon-font/"><img id="title" src="https://fontmeme.com/permalink/220724/a880ccd1e23b6d5cdbe6b200cada4aa1.png" alt="pokemon-font" border="0"></a>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-3 p-2">
+			<div class="row border border-dark p-3">
+					Score: <span id="allTimeScore" class="ms-2">@Model.AllTimeScore</span>
+			</div>
+			@*<div class="row border border-dark p-3">
+					Challenge Mode Personal Best: <span id="personalBest" class="ms-2">@Model.PersonalBest</span>
+			</div>*@
+		</div>
+		<div class="col-6 d-flex justify-content-center">
+			<img id="sprite" src="@Model.SpriteUrl" class="pokemon-image img-fluid" style="width: auto; height: 500px"/>
+		</div>
+		<div class="col-3 d-flex justify-content-center">
+			<span class="border border-dark p-5">	
+				Generations:
+				<div class="row">
+					@for (int i = 1; i < (maxGeneration + 1); i++)
+					{
+						<div class="form-check form-switch" id="generationBox">
+							<input class="form-check-input" type="checkbox" id="generation@(i)" onclick="updateGenerations(@(i))">
+							<label class="form-check-label" for="generation@(i)">Gen @(i)</label>
+						</div>
+					}
+				</div>
+			</span>
+		</div>
+	</div>
+</div>
+
+<div class="container p-4" id="choiceContainer">
+	<div class="row d-flex justify-content-md-center">
+		@foreach (string choice in Model.Choices)
+		{
+			<div class="col col-md-auto" id="choices">
+				<button class="btn btn-outline-dark" onclick="checkAnswer('@choice', '@Model.Seed')">@choice</button>
+			</div>
+		}
+	</div>
+</div>
+
+<div class="container-fluid d-flex justify-content-center p-4 visually-hidden" id="pokemonNameRevealContainer">
+	<div class="row text-center">
+			<a style="font-size: 48px">@Model.SelectedPokemon</a>
+			<p style="font-size: 32px">New Pokemon in: <span id="countdownTimeLeft">2</span></p>
+	</div>
+</div>
+
+<script type="text/javascript">
+	window.onload = function(){
+		isGenerationSelectedInCache();
+	}
+
+	function isGenerationSelectedInCache() {
+		var generations = [1,2,3,4,5,6,7,8];
+		var cachedGenerations = @Html.Raw(Json.Serialize(Model.Generations));
+
+		generations.forEach(function(generation) {
+			if (cachedGenerations.includes(generation)) {
+				document.getElementById("generation"+generation).checked = true;
+			}
+		});
+
+		if (cachedGenerations.length == 1) {
+			document.getElementById("generation"+cachedGenerations[0]).disabled = true;
+		}
+	}
+
+	function updateGenerationsCache(generation) {
+
+		$.ajax({
+			url: '@Url.Action("SetCachedData","Who")',
+			type: 'POST',
+			data: {
+				key: "gen",
+				value: generation
+			}
+		});
+	}
+
+	function getActiveCheckboxes() {
+		var generations = [1,2,3,4,5,6,7,8];
+		var activeCheckboxes = [];
+
+		generations.forEach(function(generation) {
+			if (document.getElementById("generation"+generation).checked) {
+				activeCheckboxes.push(generation);
+			}
+		});
+
+		return activeCheckboxes;
+	}
+
+	function updateGenerations(gen) {
+		var activeGenerations = getActiveCheckboxes();
+		updateGenerationsCache(gen);
+
+		// Code for handling disabling/enabling checkboxes
+		// Disable checkbox when it is the last one checked
+		// Enable All checkboxes when there are 2 or greater checked
+
+		// If we turned this checkbox on :
+		if (activeGenerations.includes(gen)) {
+			if (activeGenerations.length == 2){ 
+				enableAllCheckboxes();
+			}
+		}
+		// If we turned this checkbox off :
+		else {
+			if (activeGenerations.length == 1){
+				document.getElementById("generation"+activeGenerations[0]).disabled = true;
+			}
+		}
+	}
+
+	function enableAllCheckboxes(){
+		var activeGenerations = getActiveCheckboxes();
+
+		activeGenerations.forEach(function(generation) {
+			document.getElementById("generation"+generation).disabled = false;
+		});
+	}
+	
+	function incrementScore() {
+		var score = document.getElementById("allTimeScore").textContent;
+		score.textContent = score++;
+
+		$.ajax({
+			url: '@Url.Action("SetCachedData","Who")',
+			type: 'POST',
+			data: {
+				key: "score",
+				value: score
+			}
+		});
+	}
+
+	function checkAnswer(userAnswer, seed) {
+		$.ajax({
+			url: '@Url.Action("ValidateAnswer","Who")',
+			type: 'POST',
+			data: {
+				userAnswer,
+				seed
+			}
+		}).done(function (answerCorrect){
+			if (answerCorrect){
+				incrementScore();
+			}
+
+			// then go ahead and change the visuals on the screen to reveal the pokemon and hide the choice buttons
+			document.getElementById("allTimeScore").textContent++;
+
+			var sprite = document.getElementById("sprite");
+			sprite.classList.remove("pokemon-image");
+
+			var choiceButtons = document.getElementById("choiceContainer");
+			choiceButtons.classList.add("visually-hidden");
+
+			document.getElementById("pokemonNameRevealContainer").classList.remove("visually-hidden");
+			countdown();
+		});
+
+		function countdown() {
+			var interval = setInterval(function() {
+				var secondsLeft = document.getElementById("countdownTimeLeft").textContent;
+				document.getElementById("countdownTimeLeft").innerHTML = --secondsLeft;
+
+				if (secondsLeft <= 0)
+				{
+					//document.getElementById('countdown').classList.add("visually-hidden");
+					clearInterval(interval);
+					
+					// And run a new game : 
+					window.location.href = '@Url.Action("Index", "Who")/';
+				}
+			}, 1000);
+		}
+	}
+</script>

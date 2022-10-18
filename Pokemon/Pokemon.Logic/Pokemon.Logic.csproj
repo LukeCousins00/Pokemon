@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pokemon.Data\Pokemon.Data.csproj" />
+  </ItemGroup>
+
 </Project>
